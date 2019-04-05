@@ -1,0 +1,27 @@
+version: "3"
+services:
+    mongo:
+        image: mongo:4.0.8
+        volumes:
+            - ./data:/data/db
+        expose:
+            - "27017"
+        restart: always
+    mongo-express:
+        image: mongo-express:0.49.0
+        depends_on:
+            - mongo
+        ports:
+            - "8081:8081"
+        environment:
+            - ME_CONFIG_MONGODB_SERVER=mongo
+            - ME_CONFIG_MONGODB_PORT=27017
+        restart: always
+    omniboard:
+        build: omniboard
+        command: omniboard -m mongo:27017:${SACRED_DB}
+        depends_on:
+            - mongo
+        ports:
+            - "9000:9000"
+        restart: always
